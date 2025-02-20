@@ -1,4 +1,5 @@
 # all-ton-wallets
+![работа кода](wallet_vers.jpg)
 Checking all TON wallets
 # wallet versions (11)
 WalletV2R1
