@@ -6,6 +6,8 @@ Checking all TON wallets
 
 Для работы с данным проектом необходимо установить библиотеку `pytoniq-core`. Вы можете сделать это, выполнив следующую команду в терминале:
 ```pip install pytoniq-core```
+а так же ```tonutils```
+
 # wallet versions (11)
 WalletV2R1
 WalletV2R2
