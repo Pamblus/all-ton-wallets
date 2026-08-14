@@ -3,7 +3,7 @@ from tonutils.clients import ToncenterClient
 from ton_core import NetworkGlobalID, PrivateKey
 from tonutils.contracts import (
     WalletV2R1, WalletV2R2, WalletV3R1, WalletV3R2, WalletV4R1, WalletV4R2, WalletV5R1,
-#    HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
+    HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
 )
 import asyncio
 import aiohttp
@@ -22,10 +22,10 @@ ENABLED_WALLETS = [
     "WalletV4R1",
     "WalletV4R2",
     "WalletV5R1",
-#    "HighloadWalletV2",
-#    "HighloadWalletV3",
-#    "PreprocessedWalletV2",
-#    "PreprocessedWalletV2R1",
+    # "HighloadWalletV2",
+    # "HighloadWalletV3",
+    # "PreprocessedWalletV2",
+    # "PreprocessedWalletV2R1",
 ]
 
 # Ключи для Toncenter API
@@ -56,10 +56,10 @@ WALLET_CLASSES = {
     "WalletV4R1": WalletV4R1,
     "WalletV4R2": WalletV4R2,
     "WalletV5R1": WalletV5R1,
-#    "HighloadWalletV2": HighloadWalletV2,
- #   "HighloadWalletV3": HighloadWalletV3,
-#    "PreprocessedWalletV2": PreprocessedWalletV2,
-#    "PreprocessedWalletV2R1": PreprocessedWalletV2R1,
+    "HighloadWalletV2": HighloadWalletV2,
+    "HighloadWalletV3": HighloadWalletV3,
+    "PreprocessedWalletV2": PreprocessedWalletV2,
+    "PreprocessedWalletV2R1": PreprocessedWalletV2R1,
 }
 
 # Получаем баланс через Toncenter API
@@ -133,11 +133,18 @@ async def create_wallets(client, private_key):
             continue
             
         try:
-            # Создаем экземпляр кошелька
-            wallet = wallet_class(client, private_key)
-            # Строгая проверка, что это действительно кошелек, а не ключ
-            if hasattr(wallet, 'address'):
-                wallets.append(wallet)
+            # В новой версии tonutils from_private_key возвращает тупл (wallet, public_key)
+            result = wallet_class.from_private_key(client, private_key)
+            
+            # Извлекаем объект кошелька из тупла
+            if isinstance(result, tuple) and len(result) > 0:
+                wallet_obj = result[0]
+            else:
+                wallet_obj = result
+                
+            # Строгая проверка, что это действительно кошелек
+            if hasattr(wallet_obj, 'address'):
+                wallets.append(wallet_obj)
             else:
                 print(f"Ошибка: {wallet_name} создан, но не имеет атрибута address.")
         except Exception as e:
