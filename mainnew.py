@@ -5,10 +5,6 @@ from tonutils.contracts import (
     WalletV2R1, WalletV2R2, WalletV3R1, WalletV3R2, WalletV4R1, WalletV4R2, WalletV5R1,
     HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
 )
-from tonutils.contracts.wallet import (
-    WalletV2Config, WalletV3Config, WalletV4Config, WalletV5Config,
-    HighloadWalletV2Config, HighloadWalletV3Config, PreprocessedWalletV2Config
-)
 import asyncio
 import aiohttp
 
@@ -50,21 +46,6 @@ FEE_TON = 0.05
 # ==========================================
 # ЛОГИКА СКРИПТА
 # ==========================================
-
-# Словарь для сопоставления названий классов с их конфигурациями
-WALLET_CONFIGS = {
-    "WalletV2R1": WalletV2Config(),
-    "WalletV2R2": WalletV2Config(),
-    "WalletV3R1": WalletV3Config(),
-    "WalletV3R2": WalletV3Config(),
-    "WalletV4R1": WalletV4Config(),
-    "WalletV4R2": WalletV4Config(),
-    "WalletV5R1": WalletV5Config(),
-    "HighloadWalletV2": HighloadWalletV2Config(),
-    "HighloadWalletV3": HighloadWalletV3Config(),
-    "PreprocessedWalletV2": PreprocessedWalletV2Config(),
-    "PreprocessedWalletV2R1": PreprocessedWalletV2Config(), # Используем базовый конфиг
-}
 
 # Получаем баланс через Toncenter API
 async def get_balance(address, network, session):
@@ -126,18 +107,24 @@ async def send_transaction(wallet, network, destination, amount_ton, comment, se
     except Exception as e:
         print(f"Ошибка при отправке транзакции для {address}: {e}")
 
-# Создаем выбранные версии кошельков
+# Создаем выбранные версии кошельков (без использования конфигов)
 async def create_wallets(client, private_key):
     wallets = []
     for wallet_name in ENABLED_WALLETS:
         # Динамически получаем класс кошелька по его имени
         wallet_class = globals().get(wallet_name)
-        config = WALLET_CONFIGS.get(wallet_name)
         
-        if wallet_class and config:
-            wallets.append(wallet_class(client, private_key, config))
-        else:
-            print(f"Предупреждение: класс {wallet_name} не найден или у него нет конфига.")
+        if not wallet_class:
+            print(f"Предупреждение: класс {wallet_name} не найден в библиотеке. Он будет пропущен.")
+            continue
+            
+        try:
+            # Передаем только клиент и приватный ключ. 
+            # Библиотека сама подставит дефолтный конфиг.
+            wallets.append(wallet_class(client, private_key))
+        except Exception as e:
+            print(f"Ошибка при инициализации {wallet_name}: {e}")
+            
     return wallets
 
 # Парсер слов из файла english.txt
