@@ -1,13 +1,10 @@
 from pytoniq_core.crypto.keys import mnemonic_to_private_key
 from tonutils.clients import ToncenterClient
 from ton_core import NetworkGlobalID, PrivateKey
-
-# Жестко импортируем все версии кошельков
 from tonutils.contracts import (
     WalletV2R1, WalletV2R2, WalletV3R1, WalletV3R2, WalletV4R1, WalletV4R2, WalletV5R1,
-  #  HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
+#    HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
 )
-
 import asyncio
 import aiohttp
 
@@ -60,8 +57,8 @@ WALLET_CLASSES = {
     "WalletV4R2": WalletV4R2,
     "WalletV5R1": WalletV5R1,
 #    "HighloadWalletV2": HighloadWalletV2,
-#    "HighloadWalletV3": HighloadWalletV3,
- #   "PreprocessedWalletV2": PreprocessedWalletV2,
+ #   "HighloadWalletV3": HighloadWalletV3,
+#    "PreprocessedWalletV2": PreprocessedWalletV2,
 #    "PreprocessedWalletV2R1": PreprocessedWalletV2R1,
 }
 
@@ -138,7 +135,11 @@ async def create_wallets(client, private_key):
         try:
             # Создаем экземпляр кошелька
             wallet = wallet_class(client, private_key)
-            wallets.append(wallet)
+            # Строгая проверка, что это действительно кошелек, а не ключ
+            if hasattr(wallet, 'address'):
+                wallets.append(wallet)
+            else:
+                print(f"Ошибка: {wallet_name} создан, но не имеет атрибута address.")
         except Exception as e:
             print(f"Ошибка при инициализации {wallet_name}: {e}")
             
@@ -206,6 +207,11 @@ async def main():
                         wallets = await create_wallets(client, private_key)
 
                         for wallet in wallets:
+                            # Строгая проверка перед вызовом
+                            if not hasattr(wallet, 'address'):
+                                print(f"Пропуск: объект не является кошельком.")
+                                continue
+                                
                             address = wallet.address.to_str()
                             try:
                                 balance_ton = await get_balance(address, network, session) / 1e9
@@ -251,6 +257,9 @@ async def main():
                         wallets = await create_wallets(client, private_key)
 
                         for wallet in wallets:
+                            if not hasattr(wallet, 'address'):
+                                continue
+                                
                             address = wallet.address.to_str()
                             try:
                                 balance_ton = await get_balance(address, network, session) / 1e9
