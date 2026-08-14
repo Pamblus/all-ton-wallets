@@ -3,7 +3,7 @@ from tonutils.clients import ToncenterClient
 from ton_core import NetworkGlobalID, PrivateKey
 from tonutils.contracts import (
     WalletV2R1, WalletV2R2, WalletV3R1, WalletV3R2, WalletV4R1, WalletV4R2, WalletV5R1,
-    HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
+  #  HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
 )
 import asyncio
 import aiohttp
@@ -56,10 +56,10 @@ WALLET_CLASSES = {
     "WalletV4R1": WalletV4R1,
     "WalletV4R2": WalletV4R2,
     "WalletV5R1": WalletV5R1,
-    "HighloadWalletV2": HighloadWalletV2,
-    "HighloadWalletV3": HighloadWalletV3,
-    "PreprocessedWalletV2": PreprocessedWalletV2,
-    "PreprocessedWalletV2R1": PreprocessedWalletV2R1,
+  #  "HighloadWalletV2": HighloadWalletV2,
+  #  "HighloadWalletV3": HighloadWalletV3,
+  #  "PreprocessedWalletV2": PreprocessedWalletV2,
+  #  "PreprocessedWalletV2R1": PreprocessedWalletV2R1,
 }
 
 # Получаем баланс через Toncenter API
