@@ -3,7 +3,7 @@ from tonutils.clients import ToncenterClient
 from ton_core import NetworkGlobalID, PrivateKey
 from tonutils.contracts import (
     WalletV2R1, WalletV2R2, WalletV3R1, WalletV3R2, WalletV4R1, WalletV4R2, WalletV5R1,
-  #  HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
+   # HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
 )
 import asyncio
 import aiohttp
@@ -57,9 +57,9 @@ WALLET_CLASSES = {
     "WalletV4R2": WalletV4R2,
     "WalletV5R1": WalletV5R1,
   #  "HighloadWalletV2": HighloadWalletV2,
-  #  "HighloadWalletV3": HighloadWalletV3,
+ #   "HighloadWalletV3": HighloadWalletV3,
   #  "PreprocessedWalletV2": PreprocessedWalletV2,
-  #  "PreprocessedWalletV2R1": PreprocessedWalletV2R1,
+   # "PreprocessedWalletV2R1": PreprocessedWalletV2R1,
 }
 
 # Получаем баланс через Toncenter API
@@ -111,10 +111,13 @@ async def send_transaction(wallet, network, destination, amount_ton, comment, se
             print(f"Недостаточно средств. Баланс: {balance_ton} TON, требуется: {amount_ton + FEE_TON} TON.")
             return
 
+        # ПРЕОБРАЗУЕМ СУММУ В ЦЕЛЫЕ НАНОТОН (INT) ДЛЯ БИБЛИОТЕКИ
+        amount_nano = int(amount_ton * 1e9)
+
         # Создаем транзакцию
         tx_hash = await wallet.transfer(
             destination=destination,
-            amount=amount_ton,
+            amount=amount_nano,  # Передаем наноТОН
             body=comment,
         )
         print(f"Успешно отправлено {amount_ton} TON на {destination}!")
