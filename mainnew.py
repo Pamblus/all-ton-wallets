@@ -1,10 +1,13 @@
 from pytoniq_core.crypto.keys import mnemonic_to_private_key
 from tonutils.clients import ToncenterClient
 from ton_core import NetworkGlobalID, PrivateKey
+
+# Жестко импортируем все версии кошельков
 from tonutils.contracts import (
     WalletV2R1, WalletV2R2, WalletV3R1, WalletV3R2, WalletV4R1, WalletV4R2, WalletV5R1,
-    HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
+  #  HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
 )
+
 import asyncio
 import aiohttp
 
@@ -22,10 +25,10 @@ ENABLED_WALLETS = [
     "WalletV4R1",
     "WalletV4R2",
     "WalletV5R1",
-    "HighloadWalletV2",
-    "HighloadWalletV3",
-    "PreprocessedWalletV2",
-    "PreprocessedWalletV2R1",
+#    "HighloadWalletV2",
+#    "HighloadWalletV3",
+#    "PreprocessedWalletV2",
+#    "PreprocessedWalletV2R1",
 ]
 
 # Ключи для Toncenter API
@@ -46,6 +49,21 @@ FEE_TON = 0.05
 # ==========================================
 # ЛОГИКА СКРИПТА
 # ==========================================
+
+# Сопоставление строковых названий с реальными классами
+WALLET_CLASSES = {
+    "WalletV2R1": WalletV2R1,
+    "WalletV2R2": WalletV2R2,
+    "WalletV3R1": WalletV3R1,
+    "WalletV3R2": WalletV3R2,
+    "WalletV4R1": WalletV4R1,
+    "WalletV4R2": WalletV4R2,
+    "WalletV5R1": WalletV5R1,
+#    "HighloadWalletV2": HighloadWalletV2,
+#    "HighloadWalletV3": HighloadWalletV3,
+ #   "PreprocessedWalletV2": PreprocessedWalletV2,
+#    "PreprocessedWalletV2R1": PreprocessedWalletV2R1,
+}
 
 # Получаем баланс через Toncenter API
 async def get_balance(address, network, session):
@@ -107,21 +125,20 @@ async def send_transaction(wallet, network, destination, amount_ton, comment, se
     except Exception as e:
         print(f"Ошибка при отправке транзакции для {address}: {e}")
 
-# Создаем выбранные версии кошельков (без использования конфигов)
+# Создаем выбранные версии кошельков
 async def create_wallets(client, private_key):
     wallets = []
     for wallet_name in ENABLED_WALLETS:
-        # Динамически получаем класс кошелька по его имени
-        wallet_class = globals().get(wallet_name)
+        wallet_class = WALLET_CLASSES.get(wallet_name)
         
         if not wallet_class:
-            print(f"Предупреждение: класс {wallet_name} не найден в библиотеке. Он будет пропущен.")
+            print(f"Предупреждение: класс {wallet_name} не найден. Он будет пропущен.")
             continue
             
         try:
-            # Передаем только клиент и приватный ключ. 
-            # Библиотека сама подставит дефолтный конфиг.
-            wallets.append(wallet_class(client, private_key))
+            # Создаем экземпляр кошелька
+            wallet = wallet_class(client, private_key)
+            wallets.append(wallet)
         except Exception as e:
             print(f"Ошибка при инициализации {wallet_name}: {e}")
             
@@ -147,7 +164,7 @@ def parse_words(word_count):
 
 # Основная функция
 async def main():
-    # Создаем одну сессию для всех запросов (работает намного быстрее)
+    # Создаем одну сессию для всех запросов
     async with aiohttp.ClientSession() as session:
         while True:
             mode_choice = input("Выберите режим:\n1) Основной\n2) Парсер\n").strip()
