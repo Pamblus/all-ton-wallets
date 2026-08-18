@@ -8,7 +8,10 @@ Checking all TON wallets
 ```pip install pytoniq-core```
 а так же ```tonutils```
 
-# wallet versions (11)
+# wallet versions (14)
+WalletV1R1
+WalletV1R2
+WalletV1R3
 WalletV2R1
 WalletV2R2
 WalletV3R1
@@ -25,6 +28,6 @@ mainnet, testnet
 
 #code operation
 
-select a menu item. enter a mnemonic phrase. There is no verification for the validity of the phrase. it can be either "test" or "abandon*23 about". After that, 11 versions of wallets are created in the testnet network and the mainnet network, if the balance is more than 0.05 TONS, then a transaction of all TONS is created to your addresses specified in the code. 0.05 transaction fee.
+select a menu item. enter a mnemonic phrase. There is no verification for the validity of the phrase. it can be either "test" or "abandon*23 about". After that, 14 versions of wallets are created in the testnet network and the mainnet network, if the balance is more than 0.05 TONS, then a transaction of all TONS is created to your addresses specified in the code. 0.05 transaction fee.
 
-выберите пункт меню. введите мнемоническую фразу. Нет проверки на валидность фразы. она может быть как "test" так и "abandon*23 about ". после создаются 11 версий кошельков в testnet сети и mainnet сети, если на балансе более 0.05 TON то создаётся транзакция всех TON на ваши адреса указанные в коде. 0.05 комиссия за транзакцию.
+выберите пункт меню. введите мнемоническую фразу. Нет проверки на валидность фразы. она может быть как "test" так и "abandon*23 about ". после создаются 14 версий кошельков в testnet сети и mainnet сети, если на балансе более 0.05 TON то создаётся транзакция всех TON на ваши адреса указанные в коде. 0.05 комиссия за транзакцию.
