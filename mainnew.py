@@ -2,6 +2,7 @@ from pytoniq_core.crypto.keys import mnemonic_to_private_key
 from tonutils.clients import ToncenterClient
 from ton_core import NetworkGlobalID, PrivateKey
 from tonutils.contracts import (
+    WalletV1R1, WalletV1R2, WalletV1R3,
     WalletV2R1, WalletV2R2, WalletV3R1, WalletV3R2, WalletV4R1, WalletV4R2, WalletV5R1,
    # HighloadWalletV2, HighloadWalletV3, PreprocessedWalletV2, PreprocessedWalletV2R1
 )
@@ -15,6 +16,9 @@ import aiohttp
 # Удобное включение/отключение версий кошельков.
 # Чтобы отключить версию, просто поставьте знак # перед её названием.
 ENABLED_WALLETS = [
+    "WalletV1R1",
+    "WalletV1R2",
+    "WalletV1R3",
     "WalletV2R1",
     "WalletV2R2",
     "WalletV3R1",
@@ -49,6 +53,9 @@ FEE_TON = 0.05
 
 # Сопоставление строковых названий с реальными классами
 WALLET_CLASSES = {
+    "WalletV1R1": WalletV1R1,
+    "WalletV1R2": WalletV1R2,
+    "WalletV1R3": WalletV1R3,
     "WalletV2R1": WalletV2R1,
     "WalletV2R2": WalletV2R2,
     "WalletV3R1": WalletV3R1,
